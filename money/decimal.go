@@ -38,5 +38,19 @@ func ParseDecimal(value string) (Decimal, error) {
 
 	precision := byte(len(fracPart))
 
-	return Decimal{subunits: subunits, precision: precision}, nil
+	dec := Decimal{subunits: subunits, precision: precision}
+	dec.simplify()
+	return dec, nil
+}
+
+func (d *Decimal) simplify() {
+	// Using %10 returns the last digit in base 10 of a number.
+	// If the precision is positive, that digit belongs to
+	// the right side of the decimal separator
+
+	for d.subunits%10 == 0 && d.precision > 0 {
+		d.precision--
+		d.subunits /= 10
+	}
+
 }
