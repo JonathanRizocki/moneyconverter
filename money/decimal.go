@@ -18,6 +18,15 @@ type Decimal struct {
 	precision byte
 }
 
+const (
+	// ErrInvalidDecimal is return if the decimal is malformed
+	ErrInvalidDecimal = Error("unable to conver the decimal")
+
+	// ErrTooLarge is returned if the quantity is too large.
+	// This would cause floating point precision errors.
+	ErrTooLarge = Error("quantity over 10^12 is too large")
+)
+
 // ParseDecimal converts a string into its Decimal representation.
 // It assumes there is up to one decimal separator, and that
 // the separator is '.' (full stop character).
