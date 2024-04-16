@@ -2,6 +2,7 @@ package money
 
 import (
 	"errors"
+	"reflect"
 	"testing"
 )
 
@@ -102,6 +103,36 @@ func TestPow10(t *testing.T) {
 
 			if got != tc.expected {
 				t.Errorf("Expected %v, but got %v", tc.expected, got)
+			}
+		})
+	}
+}
+
+func TestSimplify(t *testing.T) {
+	tt := map[string]struct {
+		in  Decimal
+		exp Decimal
+	}{
+		"1, precision 2 -> 1,2": {
+			in:  Decimal{subunits: 1, precision: 2},
+			exp: Decimal{subunits: 1, precision: 2},
+		},
+		"1, precision 5 -> 1,5": {
+			in:  Decimal{subunits: 1, precision: 5},
+			exp: Decimal{subunits: 1, precision: 5},
+		},
+		"10000, precision 10 -> 1, 6": {
+			in:  Decimal{subunits: 10000, precision: 10},
+			exp: Decimal{subunits: 1, precision: 6},
+		},
+	}
+
+	for name, tc := range tt {
+		t.Run(name, func(t *testing.T) {
+			tc.in.simplify()
+
+			if !reflect.DeepEqual(tc.in, tc.exp) {
+				t.Errorf("Expected %v, but got %v", tc.exp, tc.in)
 			}
 		})
 	}
