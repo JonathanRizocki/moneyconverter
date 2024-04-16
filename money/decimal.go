@@ -26,6 +26,9 @@ const (
 	// ErrTooLarge is returned if the quantity is too large.
 	// This would cause floating point precision errors.
 	ErrTooLarge = Error("quantity over 10^12 is too large")
+
+	// maxDecimal is the number of digits in a thousand billion.
+	maxDecimal = 12
 )
 
 // ParseDecimal converts a string into its Decimal representation.
@@ -33,9 +36,6 @@ const (
 // the separator is '.' (full stop character).
 func ParseDecimal(value string) (Decimal, error) {
 	intPart, fracPart, _ := strings.Cut(value, ".")
-
-	// maxDecimal is the number of digits in a thousand billion.
-	const maxDecimal = 12
 
 	if len(intPart) > maxDecimal {
 		return Decimal{}, ErrTooLarge

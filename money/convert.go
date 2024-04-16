@@ -7,6 +7,11 @@ func Convert(amount Amount, to Currency) (Amount, error) {
 	// Convert to the target currency applying the fetched change rate.
 	convertedValue := applyExchangeRate(amount, to, ExchangeRate{subunits: 2, precision: 0})
 
+	// Validate the converted amount is in the handled bounded range.
+	if err := convertedValue.validate(); err != nil {
+		return Amount{}, err
+	}
+
 	return convertedValue, nil
 }
 
