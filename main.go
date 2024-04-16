@@ -49,4 +49,11 @@ func main() {
 
 	fmt.Println("Amount:", amount, "; Currency:", toCurrency)
 
+	convertedAmount, err := money.Convert(amount, toCurrency)
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "unable to convert %s to %s:", amount, toCurrency)
+	}
+
+	fmt.Printf("%s = %s\n", amount, &convertedAmount)
+
 }

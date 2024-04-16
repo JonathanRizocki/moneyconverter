@@ -80,3 +80,21 @@ func pow10(power byte) int64 {
 		return int64(math.Pow(10, float64(power)))
 	}
 }
+
+// String implements stringer and returns the Decimal formatted as
+// digits and optionally a decimal point followed by digits.
+func (d *Decimal) String() string {
+	// Quick-win, no need to do maths.
+	if d.precision == 0 {
+		return fmt.Sprintf("%d", d.subunits)
+	}
+
+	centsPerUnit := pow10(d.precision)
+	frac := d.subunits % centsPerUnit
+	integer := d.subunits / centsPerUnit
+
+	// We always want to print the correct number of digits - even if they finish with 0.
+	decimalFormat := "%d.%0" + strconv.Itoa(int(d.precision)) + "d"
+	return fmt.Sprintf(decimalFormat, integer, frac)
+
+}
