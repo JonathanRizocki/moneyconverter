@@ -37,13 +37,13 @@ const (
 func ParseDecimal(value string) (Decimal, error) {
 	intPart, fracPart, _ := strings.Cut(value, ".")
 
-	if len(intPart) > maxDecimal {
-		return Decimal{}, ErrTooLarge
-	}
-
 	subunits, err := strconv.ParseInt(intPart+fracPart, 10, 64)
 	if err != nil {
 		return Decimal{}, fmt.Errorf("%w: %s", ErrInvalidDecimal, err.Error())
+	}
+
+	if subunits > maxDecimal {
+		return Decimal{}, ErrTooLarge
 	}
 
 	precision := byte(len(fracPart))

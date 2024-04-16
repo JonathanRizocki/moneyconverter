@@ -68,3 +68,41 @@ func TestParseDecimal(t *testing.T) {
 		})
 	}
 }
+
+func TestPow10(t *testing.T) {
+	tt := map[string]struct {
+		in       byte
+		expected int64
+	}{
+		"10^0": {
+			in:       0,
+			expected: 1,
+		},
+		"10^1": {
+			in:       1,
+			expected: 10,
+		},
+		"10^2": {
+			in:       2,
+			expected: 100,
+		},
+		"10^3": {
+			in:       3,
+			expected: 1000,
+		},
+		"10^4": {
+			in:       4,
+			expected: 10_000,
+		},
+	}
+
+	for name, tc := range tt {
+		t.Run(name, func(t *testing.T) {
+			got := pow10(tc.in)
+
+			if got != tc.expected {
+				t.Errorf("Expected %v, but got %v", tc.expected, got)
+			}
+		})
+	}
+}
