@@ -65,3 +65,42 @@ func TestNewAmount(t *testing.T) {
 		})
 	}
 }
+
+func TestValidate(t *testing.T) {
+	tt := map[string]struct {
+		in  Amount
+		err error
+	}{
+		"nominal": {
+			in: Amount{
+				quantity: Decimal{subunits: 1_000_000_000, precision: 2},
+				currency: Currency{code: "USD", precision: 2},
+			},
+			err: nil,
+		},
+		"too precise": {
+			in: Amount{
+				quantity: Decimal{subunits: 1_000, precision: 50},
+				currency: Currency{code: "USD", precision: 2},
+			},
+			err: ErrTooPrecise,
+		},
+		"too large": {
+			in: Amount{
+				quantity: Decimal{subunits: 1_000_000_000_000_000, precision: 2},
+				currency: Currency{code: "USD", precision: 2},
+			},
+			err: ErrTooLarge,
+		},
+	}
+
+	for name, tc := range tt {
+		t.Run(name, func(t *testing.T) {
+
+			err := tc.in.validate()
+			if !errors.Is(err, tc.err) {
+				t.Errorf("Expected error %v, but got %v", tc.err, err)
+			}
+		})
+	}
+}

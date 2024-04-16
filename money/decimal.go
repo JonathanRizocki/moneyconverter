@@ -28,7 +28,7 @@ const (
 	ErrTooLarge = Error("quantity over 10^12 is too large")
 
 	// maxDecimal is the number of digits in a thousand billion.
-	maxDecimal = 12
+	maxDecimal = 1e12
 )
 
 // ParseDecimal converts a string into its Decimal representation.
