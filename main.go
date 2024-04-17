@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	ecb "learngo-pockets/moneyconverter/ecbank"
 	"learngo-pockets/moneyconverter/money"
 	"os"
 )
@@ -49,7 +50,9 @@ func main() {
 
 	fmt.Println("Amount:", amount, "; Currency:", toCurrency)
 
-	convertedAmount, err := money.Convert(amount, toCurrency)
+	rates := ecb.Client{}
+
+	convertedAmount, err := money.Convert(amount, toCurrency, rates)
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "unable to convert %s to %s:", amount, toCurrency)
 	}

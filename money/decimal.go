@@ -96,5 +96,4 @@ func (d *Decimal) String() string {
 	// We always want to print the correct number of digits - even if they finish with 0.
 	decimalFormat := "%d.%0" + strconv.Itoa(int(d.precision)) + "d"
 	return fmt.Sprintf(decimalFormat, integer, frac)
-
 }

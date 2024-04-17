@@ -3,9 +3,15 @@ package money
 import "fmt"
 
 // Convert applies the change rate to convert an amount to a target currency.
-func Convert(amount Amount, to Currency) (Amount, error) {
+func Convert(amount Amount, to Currency, rates ratesFetcher) (Amount, error) {
+	// fetch the change rate for the day
+	r, err := rates.FetchExchangeRate(amount.currency, to)
+	if err != nil {
+		return Amount{}, fmt.Errorf("cannot get change rate: %w", err)
+	}
+
 	// Convert to the target currency applying the fetched change rate.
-	convertedValue := applyExchangeRate(amount, to, ExchangeRate{subunits: 2, precision: 0})
+	convertedValue := applyExchangeRate(amount, to, r)
 
 	// Validate the converted amount is in the handled bounded range.
 	if err := convertedValue.validate(); err != nil {
@@ -13,6 +19,11 @@ func Convert(amount Amount, to Currency) (Amount, error) {
 	}
 
 	return convertedValue, nil
+}
+
+type ratesFetcher interface {
+	// FetchExchangeRate fetches the ExchangeRate for the day and returns it.
+	FetchExchangeRate(source, target Currency) (ExchangeRate, error)
 }
 
 // ExchangeRate represents a rate to convert from a currency to another.
@@ -46,16 +57,9 @@ func applyExchangeRate(a Amount, target Currency, rate ExchangeRate) Amount {
 
 // multiply a Decimal with an ExchangeRate and return the product
 func multiply(d Decimal, r ExchangeRate) (Decimal, error) {
-	// first, convert the ExchangeRate to a decimal
-	rate, err := ParseDecimal(fmt.Sprintf("%v", r))
-
-	if err != nil {
-		return Decimal{}, fmt.Errorf("%w: exchange rate is %v", ErrInvalidDecimal, r)
-	}
-
 	dec := Decimal{
 		subunits:  d.subunits * r.subunits,
-		precision: d.precision + rate.precision,
+		precision: d.precision + r.precision,
 	}
 
 	dec.simplify()
