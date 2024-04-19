@@ -44,7 +44,7 @@ func main() {
 
 	amount, err := money.NewAmount(quantity, fromCurrency)
 	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, err.Error())
+		//_, _ = fmt.Fprintf(os.Stderr, err.Error())
 		os.Exit(1)
 	}
 
